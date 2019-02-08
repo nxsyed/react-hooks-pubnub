@@ -1,28 +1,28 @@
 import React, { useEffect, useState } from 'react'
 
-import PubNubReact from 'pubnub-react'
+import PubNub from 'pubnub'
 
 export default function Sub(props){
 
     const [response, setResponse] = useState("New messages will be displayed here!")
 
-    const pubnub = new PubNubReact({
-        subscribeKey: 'sub-c-7e76d5bc-2658-11e9-9508-c2e2c4d7488a'
-    });
-
-    pubnub.init(Sub);
+    var pubnub = new PubNub({
+        subscribeKey: "sub-c-7e76d5bc-2658-11e9-9508-c2e2c4d7488a",
+    })
 
     useEffect(() => {
-        pubnub.subscribe({
-            channels: ["Channel1"]
-        });
         pubnub.addListener({
             status: function(statusEvent) {
+                if (statusEvent.category === "PNConnectedCategory") {
+                }
             },
-            message: (message) => {
-                setResponse(message.message.text)
+            message: function(msg) {
+                setResponse(msg.message.text)
             }
-        })
+        })      
+        pubnub.subscribe({
+            channels: ['Channel1'] 
+        });
     })
 
     return(
